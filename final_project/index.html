@@ -24,10 +24,24 @@
                     .attr('class','chart');
 
         var myChart = new dimple.chart(svg, data);
-        myChart.addCategoryAxis("x", "handedness");
-        myChart.addMeasureAxis("y", "HR");
-        myChart.addSeries(null, dimple.plot.bar);
+
+        // Vertical
+        // var x = myChart.addCategoryAxis("x", "handedness");
+        // myChart.addMeasureAxis("y", "HR");
+        // myChart.addSeries(null, dimple.plot.bar);
+        // myChart.draw();
+
+        // Bar
+        // myChart.addCategoryAxis("x", "handedness");
+        // myChart.addMeasureAxis("y", "count");
+        // myChart.addSeries(null, dimple.plot.bar);
+        // myChart.draw();
+
+        // Pie
+        myChart.addMeasureAxis("p", "count");
+        myChart.addSeries("handedness", dimple.plot.pie);
         myChart.draw();
+
     };
 </script>
 </head>
@@ -39,5 +53,6 @@
 </div>
 <script type="text/javascript">
   d3.csv("baseball_data.csv", draw);
+  // d3.csv("games.csv", draw);
 </script>
 </body>

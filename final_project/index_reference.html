@@ -16,15 +16,17 @@ div.chart_div,div.selectors_div {
     width: 600px;
 }
 </style>
+  </head>
+<body>
   <script type="text/javascript">
-  //dimensions to be plotted
+//dimensions to be plotted
 var handedness = {id: "handedness", category: "handedness", measure: null, label: "Handedness"};
 var dimensions = [
     handedness,
     {id: "height", category: null, measure: "height", label: "Height"},
     {id: "weight", category: null, measure: "weight", label: "Weight"}
 ];
-//performances 
+//performances
 var battingAverage = {id: "avg", label: "Batting average"};
 var homeRuns = {id: "HR", label: "Home runs"};
 var performances = [
@@ -189,18 +191,9 @@ function transform(d) {
     }
     return d;
 }
-</script>
 
 
-
-  </head>
-<body>
-  <script type="text/javascript">
-  /*
-    Use D3 (not dimple.js) to load the TSV file
-    and pass the contents of it to the draw function
-    */
-  d3.csv("baseball_data.csv", transform, draw);
+d3.csv("baseball_data.csv", transform, draw);
   </script>
 </body>
 </html>
