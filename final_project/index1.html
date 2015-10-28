@@ -43,7 +43,10 @@
             </div>
           <form>
         </div>
-        <div class="col-md-9 well">
+        <div class="col-md-1">
+        <p><h3>OR</h3></p>
+        </div>
+        <div class="col-md-8 well">
         <h4>Performance</h4>
         <form class="form-inline">
             <div class="form-group">
@@ -94,6 +97,76 @@
     </div>
 </div>
 <script type="text/javascript">
+
+  function filter(d){
+
+    // Get drop down values
+    var myhr = $("#player_hr").val();
+    var myavg = $("#player_avg").val();
+    var myhand = $("#player_handedness").val();
+
+    // Options selected from drop down
+    if(myhand == 2){
+      keep_hand = 'B';
+    } else if(myhand == 3){
+      keep_hand = 'L';
+    } else if(myhand == 4){
+      keep_hand = 'R';
+    }
+
+    // Better labels
+    if(d.handedness=='R'){
+      hand='Right';
+    } else if(d.handedness=='L'){
+      hand='Left';
+    } else if(d.handedness=='B'){
+      hand='Both';
+    }
+
+    // Declare player obeject
+    var player = {
+      handedness: hand,
+      name: d.name,
+      height: +d.height, // convert column to number
+      weight: +d.weight, // convert column to number
+      avg: +d.avg, //convert column to number
+      HR: +d.HR, //convert column to number
+      Total: 1
+    };
+
+    if (myhr == 1 && myavg == 1 && myhand == 1) {
+      return player
+    } else if (myavg == 1 && myhr == 1 && myhand > 1) {
+      if (d.handedness == keep_hand) {
+        return player
+      }
+    } else if (myhand == 1 && myavg == 1 && myhr > 1) {
+      if (+d.HR > myhr) {
+        return player
+      }
+    } else if (myhr == 1 && myhand == 1 && myavg < 1) {
+      if (+d.avg > myavg) {
+        return player
+      }
+    } else if (myavg < 1 && myhr == 1 && myhand > 1) {
+      if (+d.avg > myavg && d.handedness == keep_hand) {
+        return player
+      }
+    } else if (myavg < 1 && myhr > 1 && myhand == 1) {
+      if (+d.HR > myhr && +d.avg > myavg) {
+        return player
+      }
+    } else if (myavg == 1 && myhr > 1 && myhand > 1) {
+      if (+d.HR > myhr && d.handedness == keep_hand) {
+        return player
+      }
+    } else if (myavg < 1 && myhr > 1 && myhand > 1) {
+      if (+d.avg > myavg && +d.HR > myhr && d.handedness == keep_hand) {
+        return player
+      }
+    }
+  }
+
   d3.csv("baseball_data.csv", function(d){
 
       if(d.handedness=='R'){hand='Right';}
@@ -175,172 +248,47 @@
         y.title = 'Homerun';
         var mySeries = myChart4.addSeries(["name", "avg", "HR", "handedness"], dimple.plot.bubble);
         mySeries.addOrderRule("handedness")
-        //var mySeries = myChart.addSeries(null, dimple.plot.bubble);
-        // mySeries.aggregate = dimple.aggregateMethod.avg;
         myChart4.addLegend(1115, 20, 90, 500, "left");
         myChart4.draw();
 
+        function redraw(data){
+          myChart1.data = data;
+          myChart2.data = data;
+          myChart3.data = data;
+          myChart4.data = data;
+          myChart1.draw(1000);
+          myChart2.draw(1000);
+          myChart3.draw(1000);
+          myChart4.draw(1000);
+        }
 
         d3.select("#player_handedness").on("change", function () {
 
             $("#top_player").prop('selectedIndex',0);
 
-            d3.csv('baseball_data.csv', function(d) {
-             var myhr = $("#player_hr").val();
-             var myavg = $("#player_avg").val();
-             var myhand = $("#player_handedness").val();
-
-             if(myhand == 2){
-              keep_hand = 'B';
-             } else if(myhand == 3){
-              keep_hand = 'L';
-             } else if(myhand == 4){
-              keep_hand = 'R';
-             }
-
-             if(d.handedness=='R'){hand='Right';}
-             else if(d.handedness=='L'){hand='Left';}
-             else if(d.handedness=='B'){hand='Both';}
-             var player = {
-                    handedness: hand,
-                    name: d.name,
-                    height: +d.height, // convert column to number
-                    weight: +d.weight, // convert column to number
-                    avg: +d.avg, //convert column to number
-                    HR: +d.HR, //convert column to number
-                    Total: 1
-                  };
-              if(myhr == 1 && myavg == 1 && myhand == 1){
-                return player
-              } else if(myavg == 1 && myhr == 1 && myhand > 1){
-                if(d.handedness==keep_hand){return player}
-              } else if(myavg < 1 && myhr == 1 && myhand > 1){
-                if(+d.avg>myavg && d.handedness==keep_hand){return player}
-              } else if(myavg == 1 && myhr > 1 && myhand > 1){
-                if(+d.HR>myhr && d.handedness==keep_hand){return player}
-              } else if(myhand > 1 && myhr > 1 && myavg<1 ){
-                if(+d.avg>myavg && +d.HR>myhr && myhand==keep_hand){return player}
-              }
-            }, function(data){
-
-                console.table(data)
-
-                myChart1.data = data;
-                myChart2.data = data;
-                myChart3.data = data;
-                myChart4.data = data;
-                myChart1.draw(1000);
-                myChart2.draw(1000);
-                myChart3.draw(1000);
-                myChart4.draw(1000);
-            })
+            d3.csv('baseball_data.csv', filter, redraw);
         });
 
         d3.select("#player_hr").on("change", function () {
 
             $("#top_player").prop('selectedIndex',0);
 
-            d3.csv('baseball_data.csv', function(d) {
-             var myhr = $("#player_hr").val();
-             var myavg = $("#player_avg").val();
-             var myhand = $("#player_handedness").val();
-
-             if(myhand == 2){
-              keep_hand = 'B';
-             } else if(myhand == 3){
-              keep_hand = 'L';
-             } else if(myhand == 4){
-              keep_hand = 'R';
-             }
-
-             if(d.handedness=='R'){hand='Right';}
-             else if(d.handedness=='L'){hand='Left';}
-             else if(d.handedness=='B'){hand='Both';}
-             var player = {
-                    handedness: hand,
-                    name: d.name,
-                    height: +d.height, // convert column to number
-                    weight: +d.weight, // convert column to number
-                    avg: +d.avg, //convert column to number
-                    HR: +d.HR, //convert column to number
-                    Total: 1
-                  };
-              if(myhr == 1 && myavg == 1 && myhand == 1){
-                return player
-              } else if(myavg == 1 && myhand == 1 && myhr>1 ){
-                if(+d.HR>myhr){return player}
-              } else if(myavg == 1 && myhand > 1 && myhr>1 ){
-                if(+d.HR>myhr && myhand==keep_hand){return player}
-              } else if(myhand == 1 && myhr > 1 && myavg<1 ){
-                if(+d.avg>myavg && +d.HR>myhr){return player}
-              } else if(myhand > 1 && myhr > 1 && myavg<1 ){
-                if(+d.avg>myavg && +d.HR>myhr && myhand==keep_hand){return player}
-              }
-            }, function(data){
-                myChart1.data = data;
-                myChart2.data = data;
-                myChart3.data = data;
-                myChart4.data = data;
-                myChart1.draw(1000);
-                myChart2.draw(1000);
-                myChart3.draw(1000);
-                myChart4.draw(1000);
-            })
+            d3.csv('baseball_data.csv', filter, redraw)
         });
 
         d3.select("#player_avg").on("change", function () {
 
             $("#top_player").prop('selectedIndex',0);
 
-            d3.csv('baseball_data.csv', function(d) {
-             var myhr = $("#player_hr").val();
-             var myavg = $("#player_avg").val();
-             var myhand = $("#player_handedness").val();
-
-             if(myhand == 2){
-              keep_hand = 'B';
-             } else if(myhand == 3){
-              keep_hand = 'L';
-             } else if(myhand == 4){
-              keep_hand = 'R';
-             }
-
-             if(d.handedness=='R'){hand='Right';}
-             else if(d.handedness=='L'){hand='Left';}
-             else if(d.handedness=='B'){hand='Both';}
-             var player = {
-                    handedness: hand,
-                    name: d.name,
-                    height: +d.height, // convert column to number
-                    weight: +d.weight, // convert column to number
-                    avg: +d.avg, //convert column to number
-                    HR: +d.HR, //convert column to number
-                    Total: 1
-                  };
-              if(myhr == 1 && myavg == 1 && myhand == 1){
-                return player
-              } else if(myhr == 1 && myhand == 1 && myavg<1 ){
-                if(+d.avg>myavg){return player}
-              } else if(myhr == 1 && myhand > 1 && myavg<1 ){
-                if(+d.avg>myavg && myhand==keep_hand){return player}
-              } else if(myhand == 1 && myhr > 1 && myavg<1 ){
-                if(+d.avg>myavg && +d.HR>myhr){return player}
-              } else if(myhand > 1 && myhr > 1 && myavg<1 ){
-                if(+d.avg>myavg && +d.HR>myhr && myhand==keep_hand){return player}
-              }
-            }, function(data){
-                myChart1.data = data;
-                myChart2.data = data;
-                myChart3.data = data;
-                myChart4.data = data;
-                myChart1.draw(1000);
-                myChart2.draw(1000);
-                myChart3.draw(1000);
-                myChart4.draw(1000);
-            })
+            d3.csv('baseball_data.csv', filter, redraw)
         });
 
         d3.select("#top_player").on("change", function () {
+
+            $("#player_handedness").prop('selectedIndex',0);
+            $("#player_hr").prop('selectedIndex',0);
+            $("#player_avg").prop('selectedIndex',0);
+
             d3.csv('baseball_data.csv', function(d) {
 
                 var top_10_hr = ["Mike Schmidt", "Willie Stargell", "Carl Yastrzemski", "Dave Kingman", "Darrell Evans", "Graig Nettles", "Johnny Bench", "Jim Rice", "Tony Perez", "Reggie Jackson"]
@@ -356,9 +304,15 @@
                 var top_30_avg = ["Rod Carew", "Lyman Bostock", "Matty Alou", "Ralph Garr", "Bill Madlock", "Tony Oliva", "Manny Mota", "Al Oliver", "Pete Rose", "Rico Carty", "Bake McBride", "Jim Rice", "Cecil Cooper", "Joe Torre", "Keith Hernandez", "Manny Sanguillen", "Bob Watson", "Mickey Rivers", "Steve Garvey", "Lou Brock", "Mike Easler", "Ron Blomberg", "Dick Allen", "Thurman Munson", "Lou Piniella", "Hal McRae", "Mike Hargrove", "Johnny Ray", "Gene Richards", "Bill Buckner"]
 
                 var top = $("#top_player").val();
-                if(d.handedness=='R'){hand='Right';}
-                else if(d.handedness=='L'){hand='Left';}
-                else if(d.handedness=='B'){hand='Both';}
+                if(d.handedness=='R'){
+                  hand='Right';
+                }
+                else if(d.handedness=='L'){
+                  hand='Left';
+                }
+                else if(d.handedness=='B'){
+                  hand='Both';
+                }
                 var player = {
                     handedness: hand,
                     name: d.name,
@@ -396,19 +350,9 @@
                         return player
                     }
                 }
-            }, function(data){
-                myChart1.data = data;
-                myChart2.data = data;
-                myChart3.data = data;
-                myChart4.data = data;
-                myChart1.draw(1000);
-                myChart2.draw(1000);
-                myChart3.draw(1000);
-                myChart4.draw(1000);
-            })
+            }, redraw)
         });
 
     });
-
 </script>
 </body>
