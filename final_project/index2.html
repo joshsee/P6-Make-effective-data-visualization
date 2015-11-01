@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<style>
+.filters{
+  padding-top: 40px;
+  padding-right: 10px;
+  padding-right: 8px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="filters" style="display: none">
+          <form class="form-horizontal">
+            <div class="form-group"> 
+              <button id="reanimate" class="btn btn-default">Reanimate</button>
+            </div>  
+          </form>
+          <p><h3>OR</h3></p>  
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="filter">Filter By Top Player</label>
+              <select id="top_player" class="form-control">
+                <option value="0">All Players</option>
+                <option value="1">Top 10 Highest Homerun</option>
+                <option value="2">Top 20 Highest Homerun</option>
+                <option value="3">Top 30 Highest Homerun</option>
+                <option value="4">Top 10 Highest Batting Avg.</option>
+                <option value="5">Top 20 Highest Batting Avg.</option>
+                <option value="6">Top 30 Highest Batting Avg.</option>
+              </select>
+            </div>
+          <form>
+          <p><h3>OR</h3></p>
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="filter">Filter By Handedness</label>
+                <select id="player_handedness" class="form-control">
+                  <option value="1">Show All</option>
+                  <option value="2">Both</option>
+                  <option value="3">Left</option>
+                  <option value="4">Right</option>
+                </select>
+                <label for="filter">Filter By Total HomeRuns</label>
+                <select id="player_hr" class="form-control">
+                  <option value="1">Show All</option>
+                  <option value="100">More Than 100</option>
+                  <option value="200">More Than 200</option>
+                  <option value="300">More Than 300</option>
+                  <option value="400">More Than 400</option>
+                  <option value="500">More Than 500</option>
+                </select>
+                <label for="filter">Filter By Batting Average</label>
+                <select id="player_avg" class="form-control">
+                  <option value="1">Show All</option>
+                  <option value="0.10">More Than 0.10</option>
+                  <option value="0.15">More Than 0.15</option>
+                  <option value="0.20">More Than 0.20</option>
+                  <option value="0.25">More Than 0.25</option>
+                  <option value="0.30">More Than 0.30</option>
+                </select>
+            </div>
+        <form>
+        </div>
+        </div>
+        <div class="col-md-9">
+          <h1>Comparing Performance of Baseball Players</h1>
+              <p>This <a href='https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud507/baseball_data.csv&sa=D&usg=AFQjCNEjepW24JPVyIpheLuF7wHlFJd2rg'>data set</a> containing 1,157 baseball players including their handedness (right or left handed) batting average, and home runs.</p>
+              <p>This animated visualization shows the reader top 10 players of highest homeruns and highest betting average. The animation lets them see the handedness effect of achieving high homeruns and high betting average. Reader can explore further after the animation.</p>
+            <div class="row" style="text-align: center; margin-top: 20px">
+              <h4 id="overall_title" style="display: none">All Players</h4>
+            </div>  
+            <div id="my_chart4"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var top_10_hr = ["Mike Schmidt", "Willie Stargell", "Carl Yastrzemski", "Dave Kingman", "Darrell Evans", "Graig Nettles", "Johnny Bench", "Jim Rice", "Tony Perez", "Reggie Jackson"];
+
+    var top_20_hr = ["Mike Schmidt", "Willie Stargell", "Carl Yastrzemski", "Dave Kingman", "Darrell Evans", "Graig Nettles", "Johnny Bench", "Jim Rice", "Tony Perez", "Lee May", "Dick Allen", "George Foster", "Ron Santo", "Boog Powell", "Don Baylor", "Bobby Bonds", "Willie Horton", "Ron Cey", "Reggie Smith", "Reggie Jackson"];
+
+    var top_30_hr = ["Reggie Jackson", "Mike Schmidt", "Willie Stargell", "Carl Yastrzemski", "Dave Kingman", "Darrell Evans", "Graig Nettles", "Johnny Bench", "Jim Rice", "Tony Perez", "Lee May", "Dick Allen", "George Foster", "Ron Santo", "Boog Powell", "Don Baylor", "Bobby Bonds", "Willie Horton", "Ron Cey", "Reggie Smith", "Greg Luzinski", "Fred Lynn", "Rusty Staub", "Jimmy Wynn", "Steve Garvey", "George Scott", "Joe Morgan", "Gorman Thomas", "George Hendrick", "Larry Parrish"];
+
+    var top_10_avg = ["Rod Carew", "Lyman Bostock", "Matty Alou", "Ralph Garr", "Bill Madlock", "Tony Oliva", "Manny Mota", "Al Oliver", "Pete Rose", "Rico Carty"];
+
+    var top_20_avg = ["Rod Carew", "Lyman Bostock", "Matty Alou", "Ralph Garr", "Bill Madlock", "Tony Oliva", "Manny Mota", "Al Oliver", "Pete Rose", "Rico Carty", "Bake McBride", "Jim Rice", "Cecil Cooper", "Joe Torre", "Keith Hernandez", "Manny Sanguillen", "Bob Watson", "Mickey Rivers", "Steve Garvey", "Lou Brock"];
+
+    var top_30_avg = ["Rod Carew", "Lyman Bostock", "Matty Alou", "Ralph Garr", "Bill Madlock", "Tony Oliva", "Manny Mota", "Al Oliver", "Pete Rose", "Rico Carty", "Bake McBride", "Jim Rice", "Cecil Cooper", "Joe Torre", "Keith Hernandez", "Manny Sanguillen", "Bob Watson", "Mickey Rivers", "Steve Garvey", "Lou Brock", "Mike Easler", "Ron Blomberg", "Dick Allen", "Thurman Munson", "Lou Piniella", "Hal McRae", "Mike Hargrove", "Johnny Ray", "Gene Richards", "Bill Buckner"];
+
+
+  function filter(d){
+
+    // Get drop down values
+    var myhr = $("#player_hr").val();
+    var myavg = $("#player_avg").val();
+    var myhand = $("#player_handedness").val();
+
+    // Options selected from drop down
+    if(myhand == 2){
+      keep_hand = 'B';
+    } else if(myhand == 3){
+      keep_hand = 'L';
+    } else if(myhand == 4){
+      keep_hand = 'R';
+    }
+
+    // Better labels
+    if(d.handedness=='R'){
+      hand='Right';
+    } else if(d.handedness=='L'){
+      hand='Left';
+    } else if(d.handedness=='B'){
+      hand='Both';
+    }
+
+    // Declare player obeject
+    var player = {
+      handedness: hand,
+      name: d.name,
+      height: +d.height, // convert column to number
+      weight: +d.weight, // convert column to number
+      avg: +d.avg, //convert column to number
+      HR: +d.HR, //convert column to number
+      Total: 1
+    };
+
+    if (myhr == 1 && myavg == 1 && myhand == 1) {
+      return player;
+    } else if (myavg == 1 && myhr == 1 && myhand > 1) {
+      if (d.handedness == keep_hand) {
+        return player;
+      }
+    } else if (myhand == 1 && myavg == 1 && myhr > 1) {
+      if (+d.HR > myhr) {
+        return player;
+      }
+    } else if (myhr == 1 && myhand == 1 && myavg < 1) {
+      if (+d.avg > myavg) {
+        return player;
+      }
+    } else if (myavg < 1 && myhr == 1 && myhand > 1) {
+      if (+d.avg > myavg && d.handedness == keep_hand) {
+        return player;
+      }
+    } else if (myavg < 1 && myhr > 1 && myhand == 1) {
+      if (+d.HR > myhr && +d.avg > myavg) {
+        return player;
+      }
+    } else if (myavg == 1 && myhr > 1 && myhand > 1) {
+      if (+d.HR > myhr && d.handedness == keep_hand) {
+        return player;
+      }
+    } else if (myavg < 1 && myhr > 1 && myhand > 1) {
+      if (+d.avg > myavg && +d.HR > myhr && d.handedness == keep_hand) {
+        return player;
+      }
+    }
+  }
+
+  d3.csv("baseball_data.csv", function(d){
+
+      if(d.handedness=='R'){hand='Right';}
+      else if(d.handedness=='L'){hand='Left';}
+      else if(d.handedness=='B'){hand='Both';}
+
+      return {
+        handedness: hand,
+        name: d.name,
+        height: +d.height, // convert column to number
+        weight: +d.weight, // convert column to number
+        avg: +d.avg, //convert column to number
+        HR: +d.HR, //convert column to number
+        Total: 1
+      };
+  }, function(data){
+
+        var svg4 = dimple.newSvg("#my_chart4", 870, 300);
+
+        // Bubble
+        var myChart4 = new dimple.chart(svg4, data);
+        myChart4.defaultColors = [
+            new dimple.color("#80B1D3"),
+            new dimple.color("#FB8072"),
+            new dimple.color("#FDB462")
+        ];
+        myChart4.setBounds(50, 30, 750, 225);
+        var x = myChart4.addMeasureAxis("x", "avg");
+        x.tickFormat = ',.3f';
+        x.title = 'Batting Average';
+        var y = myChart4.addMeasureAxis("y", "HR");
+        y.title = 'Homerun';
+        var mySeries = myChart4.addSeries(["name", "avg", "HR", "handedness"], dimple.plot.bubble);
+        mySeries.addOrderRule("handedness")
+        myChart4.addLegend(820, 20, 100, 300, "left");
+        myChart4.draw();
+
+        // Lets show the top 10 HR player vs top AVG player
+
+        function redraw(data){
+          myChart4.data = data;
+          myChart4.draw(1000);
+        }
+
+        d3.select("#player_handedness").on("change", function () {
+
+            $("#top_player").prop('selectedIndex',0);
+
+            d3.csv('baseball_data.csv', filter, redraw);
+        });
+
+        d3.select("#player_hr").on("change", function () {
+
+            $("#top_player").prop('selectedIndex',0);
+
+            d3.csv('baseball_data.csv', filter, redraw)
+        });
+
+        d3.select("#player_avg").on("change", function () {
+
+            $("#top_player").prop('selectedIndex',0);
+
+            d3.csv('baseball_data.csv', filter, redraw)
+        });
+
+        d3.select("#top_player").on("change", function () {
+
+            $("#player_handedness").prop('selectedIndex',0);
+            $("#player_hr").prop('selectedIndex',0);
+            $("#player_avg").prop('selectedIndex',0);
+
+            d3.csv('baseball_data.csv', function(d) {
+
+                var top = $("#top_player").val();
+                if(d.handedness=='R'){
+                  hand='Right';
+                }
+                else if(d.handedness=='L'){
+                  hand='Left';
+                }
+                else if(d.handedness=='B'){
+                  hand='Both';
+                }
+                var player = {
+                    handedness: hand,
+                    name: d.name,
+                    height: +d.height, // convert column to number
+                    weight: +d.weight, // convert column to number
+                    avg: +d.avg, //convert column to number
+                    HR: +d.HR, //convert column to number
+                    Total: 1
+                  };
+                if(top==0){
+                    return player;
+                }
+                if(top==1){
+                    if($.inArray(d.name, top_10_hr)>-1){
+                       $('#overall_title').text('Top 10 Homerun Players');
+                        return player;
+                    }
+                } else if(top==2) {
+                    if($.inArray(d.name, top_20_hr)>-1){
+                      $('#overall_title').text('Top 20 Homerun Players');
+                        return player;
+                    }
+                } else if(top==3) {
+                    if($.inArray(d.name, top_30_hr)>-1){
+                      $('#overall_title').text('Top 30 Homerun Players');
+                        return player;
+                    }
+                } else if(top==4) {
+                    if($.inArray(d.name, top_10_avg)>-1){
+                      $('#overall_title').text('Top 10 Batting Average Players');
+                        return player;
+                    }
+                } else if(top==5) {
+                    if($.inArray(d.name, top_20_avg)>-1){
+                      $('#overall_title').text('Top 20 Batting Average Players');
+                        return player;
+                    }
+                } else if(top==6) {
+                    if($.inArray(d.name, top_30_avg)>-1){
+                      $('#overall_title').text('Top 30 Batting Average Players');
+                        return player;
+                    }
+                }
+            }, redraw);
+
+        });
+
+        function top10HomerunPlayer(callback) {
+          setTimeout(function() {
+            // Update Title
+            $('#overall_title').text('Top 10 Homerun Players');
+            // Redraw
+            d3.csv('baseball_data.csv', function(d) {
+
+              if(d.handedness=='R'){
+                hand='Right';
+              }
+              else if(d.handedness=='L'){
+                hand='Left';
+              }
+              else if(d.handedness=='B'){
+                hand='Both';
+              }
+              var player = {
+                  handedness: hand,
+                  name: d.name,
+                  height: +d.height, // convert column to number
+                  weight: +d.weight, // convert column to number
+                  avg: +d.avg, //convert column to number
+                  HR: +d.HR, //convert column to number
+                  Total: 1
+                };
+
+              if($.inArray(d.name, top_10_hr)>-1){
+                return player;
+              }
+            }, redraw);
+
+            if(typeof callback == 'function')
+              callback();
+          }, 4500);
+        };
+
+        function top10AvgPlayer(callback) {
+
+          setTimeout(function(){
+            
+            // Update Title
+            $('#overall_title').text('Top 10 Batting Average Players');
+            // Redraw
+            d3.csv('baseball_data.csv', function(d) {
+
+              if(d.handedness=='R'){
+                hand='Right';
+              }
+              else if(d.handedness=='L'){
+                hand='Left';
+              }
+              else if(d.handedness=='B'){
+                hand='Both';
+              }
+              var player = {
+                  handedness: hand,
+                  name: d.name,
+                  height: +d.height, // convert column to number
+                  weight: +d.weight, // convert column to number
+                  avg: +d.avg, //convert column to number
+                  HR: +d.HR, //convert column to number
+                  Total: 1
+                };
+
+              if($.inArray(d.name, top_10_avg)>-1){
+                return player;
+              }
+            }, function redraw(data){
+              $('#overall_title').show();
+              myChart4.data = data;
+              myChart4.draw(1000);
+            });
+
+            if(typeof callback == 'function')
+              callback();
+          }, 100);
+        };
+
+        function allPlayer(callback) {
+          setTimeout(function(){
+            $('#overall_title').text('All Players');
+            redraw(data); 
+            $('div.filters').show("slow");
+          }, 5000);
+        }
+
+      top10AvgPlayer(top10HomerunPlayer(allPlayer));
+
+      $('#reanimate').click(function(){
+        $('#overall_title').hide();
+        $('div.filters').hide();
+        top10AvgPlayer(top10HomerunPlayer(allPlayer));
+      });
+
+    });
+</script>
+</body>

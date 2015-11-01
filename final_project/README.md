@@ -1,17 +1,23 @@
 # Summary
-The goal of this visualization is to compare the performance of 1157 baseball player in terms of their batting average and home runs. User is allowed to view the top 10 to top 30 players based on their batting average and home runs or user can just simple filter by their performance.
+The goal of this visualization is to compare the performance of 1157 baseball player in terms of their batting average and home runs. This animated visualization shows the reader top 10 players of highest homeruns and highest betting average. The animation lets the reader see the handedness effect of achieving high homeruns or high betting average. Reader can explore further after the animation.
 
 # Design
+
 ## Initial (index.html)
 * Keeping a pie chart there is to let the user know the total handedness of baseball players selected.
 * It's kind of cluttered when displaying all the players. So adding in a filter feature there should allow the user to see the top performance player.
 * Having a bubble chart of Homerun versus Batting average allows the user to see each player's performance directly.
 
-## Second & Final (index1.html)
+## Second (index1.html)
 * In order to allow users to do comparison on the performance based on the handedness of the player. Added in handedness filtering.
 * Color of the handedness is match up on all charts.
 * Added in a histogram for Homeruns.
 * For scatter plot tooltip, players name is placed on top of other statistics.
+
+## Third & Final (index2.html)
+* In order to better explain the story which I am trying to convey, I decided to only include a scatter plot. Reason being, in a scatter plot I am able to show the relationship between homeruns and batting averages and using color for each dots to further differentiate the handedness. Reader can zoom into each player if they wanted more details by hovering over the dots.
+* I choose to use only three colors (Blue, Orange, Red) to distinctively differentiate the handedness.
+* I added in a reanimate button, if the reader missed the initial animation when the page loads.
 
 # Feedback
 
