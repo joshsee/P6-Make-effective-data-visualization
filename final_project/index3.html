@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<style>
+.filters{
+  padding-top: 40px;
+  padding-right: 10px;
+  padding-right: 8px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Comparing Performance of Baseball Players</h1>
+              <p>This <a href='https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud507/baseball_data.csv&sa=D&usg=AFQjCNEjepW24JPVyIpheLuF7wHlFJd2rg'>data set</a> containing 1,157 baseball players including their handedness (right or left handed) batting average, and home runs.</p>
+              <p>This animated visualization shows the reader top 10 players of highest homeruns and highest betting average. The animation lets them see the handedness effect of achieving high homeruns and high betting average. Reader can explore further after the animation.</p>
+            <div class="row" style="text-align: center; margin-top: 20px">
+              <h4 id="overall_title" style="display: none">All Players</h4>
+            </div>  
+            <div id="my_chart4"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+  d3.csv("baseball_data_avg_hr.csv", function(d){
+
+      if(d.handedness=='R'){hand='Right';}
+      else if(d.handedness=='L'){hand='Left';}
+
+      return {
+        handedness: hand,
+        avg: +d.avg, //convert column to number
+        HR: +d.HR, //convert column to number
+      };
+  }, function(data){
+
+        var svg4 = dimple.newSvg("#my_chart4", 970, 350);
+
+        // Bubble
+        var myChart4 = new dimple.chart(svg4, data);
+        myChart4.defaultColors = [
+            new dimple.color("#80B1D3"),
+            new dimple.color("#FB8072"),
+            new dimple.color("#FDB462")
+        ];
+        myChart4.setBounds(50, 30, 750, 225);
+        var x = myChart4.addCategoryAxis("x", "avg");
+        // x.tickFormat = ',.1f';
+        x.title = 'Batting Average';
+        var y = myChart4.addMeasureAxis("y", "HR");
+        y.title = 'Average Homerun';
+        y.addOrderRule("avg", false);
+        
+        var mySeries = myChart4.addSeries("handedness", dimple.plot.line);
+        myChart4.addLegend(820, 20, 100, 300, "left");
+        myChart4.draw();
+
+    });
+</script>
+</body>

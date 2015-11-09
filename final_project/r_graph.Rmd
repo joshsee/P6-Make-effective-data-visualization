@@ -1,0 +1,21 @@
+---
+title: "Final"
+output: html_document
+---
+
+library(ggplot2)
+library(dplyr)
+setwd('/Volumes/MacHD/Projects/P6-Make-effective-data-visualization/final_project')
+baseball <- read.csv('baseball_data.csv')
+names(baseball)
+summary(baseball$HR)
+baseball$handedness <- factor(baseball$handedness)
+ggplot(aes(x=avg, y=HR), data = subset(baseball, handedness=='L'|handedness=='R')) + geom_line(aes(colour = handedness))
+base<-aggregate(baseball$HR, by = list(handedness=baseball$handedness, avg=baseball$avg), mean)
+ggplot(aes(x=avg, y=x), data = subset(base, (handedness=='L'|handedness=='R') & avg<=200) + geom_line(aes(colour = handedness))
+baseballlr<-filter(baseball$handedness, (baseball$handedness=='L'|baseball$handedness=='R'))
+aggregate(baseball$HR, by=list(,baseball$avg),mean)
+subset(base, handedness=='L'|handedness=='R' & avg<100 )
+
+base$avgcut<-cut(base$avg, breaks=c(0.0,0.1,0.2,0.3,0.4))
+ggplot(aes(x=avg, y=x), data = subset(base, (handedness=='L'|handedness=='R'))) + geom_line(aes(colour = handedness)) + xlim(0, quantile(base$avg, 0.99)) + scale_x_sqrt()
