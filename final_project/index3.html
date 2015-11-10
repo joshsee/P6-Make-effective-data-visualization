@@ -32,7 +32,7 @@
 </div>
 <script type="text/javascript">
 
-  d3.csv("baseball_data_avg_hr.csv", function(d){
+  d3.csv("baseball_data_avg_hr_clean2.csv", function(d){
 
       if(d.handedness=='R'){hand='Right';}
       else if(d.handedness=='L'){hand='Left';}
@@ -55,7 +55,7 @@
         ];
         myChart4.setBounds(50, 30, 750, 225);
         var x = myChart4.addCategoryAxis("x", "avg");
-        // x.tickFormat = ',.1f';
+        x.tickFormat = ',.2f';
         x.title = 'Batting Average';
         var y = myChart4.addMeasureAxis("y", "HR");
         y.title = 'Average Homerun';
