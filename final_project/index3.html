@@ -22,17 +22,18 @@
         <div class="col-md-12">
           <h1>Comparing Performance of Baseball Players</h1>
               <p>This <a href='https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud507/baseball_data.csv&sa=D&usg=AFQjCNEjepW24JPVyIpheLuF7wHlFJd2rg'>data set</a> containing 1,157 baseball players including their handedness (right or left handed) batting average, and home runs.</p>
-              <p>This animated visualization shows the reader top 10 players of highest homeruns and highest betting average. The animation lets them see the handedness effect of achieving high homeruns and high betting average. Reader can explore further after the animation.</p>
+              <p>The purpose of this visualization is to compare left and rigth hand baseball player's performance in terms of their batting average and home runs average.</p>
+              <p>This visualization shows that left hand baseball player has the highest batting average and a better home runs average in comparison with right hand baseball player.</p>
             <div class="row" style="text-align: center; margin-top: 20px">
               <h4 id="overall_title" style="display: none">All Players</h4>
-            </div>  
-            <div id="my_chart4"></div>
+            </div>
+            <div id="my_chart"></div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
 
-  d3.csv("baseball_data_avg_hr_clean2.csv", function(d){
+  d3.csv("baseball_data_avg_hr.csv", function(d){
 
       if(d.handedness=='R'){hand='Right';}
       else if(d.handedness=='L'){hand='Left';}
@@ -44,26 +45,61 @@
       };
   }, function(data){
 
-        var svg4 = dimple.newSvg("#my_chart4", 970, 350);
+     // Pass in an axis object and an interval.
+     var cleanAxis = function (axis, oneInEvery) {
+         // This should have been called after draw, otherwise do nothing
+         if (axis.shapes.length > 0) {
+             // Leave the first label
+             var del = false;
+             // If there is an interval set
+             if (oneInEvery > 1) {
+                 // Operate on all the axis text
+                 axis.shapes.selectAll("text")
+                 .each(function (d) {
+                     // Remove all but the nth label
+                     if (del % oneInEvery !== 0) {
+                         this.remove();
+                         // Find the corresponding tick line and remove
+                         axis.shapes.selectAll("line").each(function (d2) {
+                             if (d === d2) {
+                                 this.remove();
+                             }
+                         });
+                     }
+                     del += 1;
+                 });
+             }
+         }
+     };
 
-        // Bubble
-        var myChart4 = new dimple.chart(svg4, data);
-        myChart4.defaultColors = [
+        var svg4 = dimple.newSvg("#my_chart", 1124, 350);
+
+        // Multiple Horizontal Line Chart
+        var myChart = new dimple.chart(svg4, data);
+        // Setting Default Colors
+        myChart.defaultColors = [
             new dimple.color("#80B1D3"),
             new dimple.color("#FB8072"),
             new dimple.color("#FDB462")
         ];
-        myChart4.setBounds(50, 30, 750, 225);
-        var x = myChart4.addCategoryAxis("x", "avg");
+        myChart.setBounds(50, 30, 950, 225);
+
+        // X-Axis
+        var x = myChart.addCategoryAxis("x", "avg");
         x.tickFormat = ',.2f';
         x.title = 'Batting Average';
-        var y = myChart4.addMeasureAxis("y", "HR");
-        y.title = 'Average Homerun';
+
+        // Y-Axis
+        var y = myChart.addMeasureAxis("y", "HR");
+        y.title = 'Average Home Runs';
         y.addOrderRule("avg", false);
-        
-        var mySeries = myChart4.addSeries("handedness", dimple.plot.line);
-        myChart4.addLegend(820, 20, 100, 300, "left");
-        myChart4.draw();
+
+        var mySeries = myChart.addSeries("handedness", dimple.plot.line);
+        myChart.addLegend(1020, 20, 100, 300, "left");
+        myChart.draw();
+
+        // Clean up unnecessary x-axis interval
+        cleanAxis(x, 5);
 
     });
 </script>

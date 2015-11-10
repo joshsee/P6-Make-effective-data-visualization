@@ -1,5 +1,6 @@
 # Summary
-The goal of this visualization is to compare the performance of 1157 baseball player in terms of their batting average and home runs. This animated visualization shows the reader top 10 players of highest homeruns and highest betting average. The animation lets the reader see the handedness effect of achieving high homeruns or high betting average. Reader can explore further after the animation.
+The goal of this visualization is to show the performance of left handed and right handed baseball players in terms of their batting average and home runs average.
+Conclusion, this visualization shows that left hand baseball player has the highest batting average and a better average home runs in comparison with right hand baseball player.
 
 # Design
 
@@ -14,10 +15,14 @@ The goal of this visualization is to compare the performance of 1157 baseball pl
 * Added in a histogram for Homeruns.
 * For scatter plot tooltip, players name is placed on top of other statistics.
 
-## Third & Final (index2.html)
+## Third (index2.html)
 * In order to better explain the story which I am trying to convey, I decided to only include a scatter plot. Reason being, in a scatter plot I am able to show the relationship between homeruns and batting averages and using color for each dots to further differentiate the handedness. Reader can zoom into each player if they wanted more details by hovering over the dots.
 * I choose to use only three colors (Blue, Orange, Red) to distinctively differentiate the handedness.
 * I added in a reanimate button, if the reader missed the initial animation when the page loads.
+
+## Forth (index3.html)
+* In order to compare the Left and Right hand baseball player's distribution its best to use a multiple horizontal line chart. Batting average is placed on X-Axis as its needed to show the gradual increase of batting average from the lowest value to the highest value. Same goes with Y-Axis, it is represented by average home runs.
+* In a multiple horizontal line chart, I used two different colors (red, blue) to represent the baseball player's handedess.
 
 # Feedback
 
@@ -89,4 +94,5 @@ I don't follow baseball at all. So I might be out of subject :)
 
 # Resources
 https://github.com/PMSI-AlignAlytics/dimple/wiki
+http://stackoverflow.com/questions/23305230/how-do-you-reduce-the-number-of-y-axis-ticks-in-dimple-js/23318244#23318244
 http://stackoverflow.com

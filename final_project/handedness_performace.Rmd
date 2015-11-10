@@ -1,0 +1,33 @@
+---
+title: "Final"
+output: html_document
+---
+library(ggplot2)
+library(dplyr)
+
+setwd("C:\\Users\\Josh\\Documents\\GitHub\\P6-Make-effective-data-visualization\\final_project")
+baseball <- read.csv('baseball_data.csv')
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Feature Names
+names(baseball)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Aggregrate handedness and get mean HR
+baseball_avg_hr<-aggregate(baseball$HR, by = list(handedness=baseball$handedness, avg=baseball$avg), mean)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# We only need Left and Right
+baseball_avg_hr<-baseball_avg_hr[baseball_avg_hr$handedness == "L"|baseball_avg_hr$handedness == "R", ]
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Change column name
+names(baseball_avg_hr)[names(baseball_avg_hr)=="x"] <- "HR"
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=avg, y=HR), data = baseball_avg_hr) + geom_line(aes(colour = handedness))
+```
