@@ -93,6 +93,6 @@ I don't follow baseball at all. So I might be out of subject :)
    Why the need for a pie chart and bar chart to present the same information? Do the filters work in combination? Why does the number of home runs increase with batting average, and how is this related to the handedness of the players?
 
 # Resources
-https://github.com/PMSI-AlignAlytics/dimple/wiki
-http://stackoverflow.com/questions/23305230/how-do-you-reduce-the-number-of-y-axis-ticks-in-dimple-js/23318244#23318244
-http://stackoverflow.com
+1. https://github.com/PMSI-AlignAlytics/dimple/wiki
+2. http://stackoverflow.com/questions/23305230/how-do-you-reduce-the-number-of-y-axis-ticks-in-dimple-js/23318244#23318244
+3. http://stackoverflow.com
